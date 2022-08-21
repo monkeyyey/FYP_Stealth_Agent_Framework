@@ -1,0 +1,88 @@
+#body {
+    background-color: black;
+    height: 100%;
+    
+}
+
+
+h2 {
+    color:#ffbb33;
+    margin-bottom: 20px;
+}
+h5 {
+    color:#ffbb33;
+
+}
+
+form {
+    text-align: center;
+}
+
+#show_all{
+    padding: 30px 20px 20px 10px;
+    margin-top: 20px;
+    color: white ;
+}
+
+div:hover{
+    border-color: #ffbb33 !important ;
+    
+}
+
+
+a:hover {
+    color: #ffbb33 !important;
+}
+
+#agents{
+    margin-top: 20px;
+}
+
+/* view report dropdown */
+.hiddenRow {
+    padding: 0 !important;
+}
+.accordian-body {
+    padding: 40px;
+    height:400px;
+    width: 100%;
+    overflow:scroll;
+}
+
+#select-option{
+    color: white;
+}
+
+#latest{
+    display: none;
+    padding-left: 60px;
+    height:400px;
+    width: 100%;
+    overflow:scroll;
+}
+
+.Unreachable{
+    color: #ff4444;
+
+}
+
+.Reachable{
+    color: #ffbb33;
+}
+.Running{
+    color: #00C851;
+}
+
+
+/* datatable plugin */
+.dataTables_info, .dataTables_filter, .dataTables_paginate, .dataTables_length  {
+    color: white !important;
+   
+}
+
+.dataTables_length select {
+    background-color: white !important;
+}
+.dataTables_filter input {
+    background-color: white !important;
+}

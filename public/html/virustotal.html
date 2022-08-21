@@ -1,0 +1,298 @@
+<html>
+   <head>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+      <link rel="stylesheet" href="/css/custom.css">
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+   </head>
+   <body id="body">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark" style="z-index: 3">
+        <a class="navbar-brand ml-4" href="/">Stealth Monkey</a>
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarContent"
+        >
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav md-auto" id="navbarr">
+                <li class="nav-item">
+                    <a class="nav-link" href="/home">Home</a>
+                </li>
+                <li class="nav-item pr-2">
+                    <a class="nav-link" href="/intrusion_detection">Intrusion</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/security_analytics">Analytics</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/file_permission">Permission</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/file_integrity">Integrity</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/custom">Custom</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/virustotal">File Scan</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/register" class="nav-link">Register</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/agents" class="nav-link">Agents</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/profiles" class="nav-link">Profiles</a>
+                </li>
+                <li class="bg-danger rounded ml-2">
+                    <a onclick="logout()" href="/login" class="nav-link">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="row justify-content-center" >
+        <table class="mt-4 table table-hover table-dark col-md-10 col-sm-12" id = "agent-table">
+            <thead class="text-warning">
+            <tr>
+                <th scope="col">agent_name</th>
+                <th scope="col">IP address</th>
+                <th scope="col">Status</th>
+                <th scope="col">Select</th>
+                <th scope="col">Last Status update</th>
+                <th scope="col">Uptime</th>
+            </tr>
+            </thead>
+            <tbody id="agents">
+            
+            </tbody>
+        </table>
+    </div>
+
+        <div class="row bg-dark p-4">
+            <div id="agent_label" class="col-12">
+
+            </div>
+            
+             <div class="p-3 col-4">
+                <h3 class="text-light">Check a file</h3>
+                <p><input type = "text" id = "Hash_filePath" /></p>
+                <input type = "submit" onclick="agent_action('get_FileHash')"/>
+                <!-- style for table -->
+                <style> 
+                    table, th, td {
+                      border: 1px solid white;
+                      border-collapse: collapse;
+                    }
+                </style>
+                <p id="scanResults" class="text-light"></p>
+
+                </div>
+             </div>
+    
+        </div>
+
+        <footer class=" text-center text-lg-start pt-4 bg-dark text-secondary" style="background: rgb(0,0,0); background: linear-gradient(180deg, rgba(12,12,12,1) 20%, rgba(16,16,16,1) 70%, rgba(24,24,24,1) 100%)">
+            <div class="container p-4 w-100 text-center justify-content-center">
+                <div class="row col-xl-12">
+                    <div class="col-xl-8 col-lg-6 col-md-12 text-left">
+                        <h3 class="col-xl-12 text-light">About Us</h3>
+                        <div class="col-xl-12">
+                            <p>
+                                <b>Stelf on the Shelf</b> is a Proof-of-Concept (POC) project, a framework
+                                that can be applied to gather runtime system configuration and status for a targeted system
+                                in stealth mode. With the framework in place, a system administrator can monitor and gather
+                                vital system information for malware and/or intrusion detection at the EndPoint level.
+                            </p>
+                        </div>
+                    </div>
+    
+                    <div class="col-xl-4 col-md-12 text-left">
+                        <h3 class="text-light">Social Media</h3>
+                        <a href="https://github.com/monkeyyey/stelf_on_the_shelf"><i class="fab fa-instagram"></i>&nbsp Instagram</a> <br>
+                        <a href="https://www.sp.edu.sg/"><i class="fa-solid fa-graduation-cap"></i>&nbsp Singapore Polytechnic</a> <br>
+                        <a href="https://github.com/monkeyyey/stelf_on_the_shelf"><i class="fab fa-github"></i>&nbsp Find us on Github!</a> <br>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center pb-3 text-light">
+                © 2022 Copyright:
+                <a class="text-secondary" href="https://stealth.com/home">Stelf on the Shelf</a>
+            </div>
+        </footer>
+        <script>
+            function logout(){
+                localStorage.clear()
+            }
+            axios.post(`/api/auth/adminaccess`, {token: localStorage.getItem('jwt_token')}).then((response) => {
+                if (response.data.access == 0){
+                    window.location.href = '/'
+                }
+            })
+            window.onbeforeunload = function (e) {
+                localStorage.removeItem("current_agent_ip");
+            };
+            var current_ip = ""
+            axios.get(`/api/agents/get_agents`)
+            .then((response) => {
+                const agentObject = response.data;
+                var current_agent = agentObject[0]['agent_name']
+                document.getElementById("agent_label").innerHTML = `<h2 class="text-light">Scan a file in '${current_agent}'</h2>`
+                var status = ""
+                var current_time = Math.floor(Date.now() / 1000)
+                for (const x in agentObject) {
+                        try{
+                            var last_status_update = parseInt(agentObject[x]['last_status_update'].split("|")[1])
+                            if ((current_time - last_status_update) < 60){
+                                status = "Running"
+                            }
+                            else{
+                                status = "Unreachable"
+                            }
+                        }
+                        catch{
+                            status = "Unreachable"
+                        }
+                        if(!agentObject[x]['last_status_update']){
+                            var last_status_update_time = "No status update available"
+                        }
+                        else{
+                            var last_status_update_time = agentObject[x]['last_status_update'].split("|")[0]
+                        }
+                        if(!agentObject[x]['uptime'] || status =="Unreachable"){
+                            var uptime = "No uptime available"
+                        }
+                        else{
+                            var uptime = agentObject[x]['uptime'].slice(0, -4)
+                        }
+                        $("#agents").append(`
+                        <tr>
+                            <td>${agentObject[x]['agent_name']}</td>
+                            <td>${agentObject[x]['agent_ip']}</td>
+                            <td>${agentObject[x]['port_number']}</td>
+                            <td><span class="bi bi-circle-fill ${status}" id="${agentObject[x]['agent_name']}_status">${status}</span></td>
+                            <td><button class="btn btn-warning btn-sm" onclick="change_agent('${agentObject[x]['agent_ip']}','${agentObject[x]['agent_name']}')">Select</button></td>
+                            <td>${last_status_update_time}</td>
+                            <td>${uptime}</td>
+                        </tr>
+                    
+                        `);
+                    
+                }    
+            })
+            function change_agent(ip, nickname){
+                current_ip = ip
+                document.getElementById("agent_label").innerHTML = `<h2 class="text-light">Scan a File in '${nickname}'</h2>`
+                localStorage.setItem("current_agent_ip",ip)
+            }
+            function agent_action(api){
+                event.preventDefault()
+                if (localStorage.getItem("baseUrl") == null) {
+                    alert("Please Select an Endpoint")
+                    return
+                }
+                if(api == "get_FileHash"){
+                    event.preventDefault()
+                    var filepath = document.getElementById("Hash_filePath").value
+                    baseUrl = localStorage.getItem('baseUrl')
+                    var requestBody = {
+                       baseUrl : baseUrl,
+                       filepath : filepath
+                    }
+                    console.log(requestBody)
+                    console.log("GOing to post")
+
+                    axios.post(`/api/VT/get_fileHash`,requestBody).then((response)=>{
+                       console.log(response)
+                       var hash_Result = response
+                       var hash_Result_dict = {
+                           hash: hash_Result
+                       }
+                       axios.post(`/api/VT/checkMalicious`, hash_Result_dict).then((vt_response)=>{
+                            // vt_response =JSON.stringify(vt_response)
+                            var html =`<h3 id="results"></h3>
+                                        <table class="text-light">
+                                        <tr>
+                                        <th>Vendor</th>
+                                        <th>Malicious</th>
+                                        <th>Result</th>
+                                        </tr>`
+                            console.log(vt_response)
+                            var keys = Object.keys(vt_response["data"])
+                            console.log(keys)
+                            var truecount = 0
+                            var falsecount = 0
+                                
+                            for(let i = 0;i <keys.length;i++){
+                                var Vendor = keys[i]
+                                var detected = vt_response["data"][Vendor]["detected"]
+                                console.log(typeof(detected))
+                                if (detected){
+                                    truecount +=1
+                                }
+                                else{
+                                    falsecount += 1
+                                }
+
+                                var result = vt_response["data"][Vendor]["result"]
+                                appendHTML =`<tr>
+                                            <td>${Vendor}</td>
+                                            <td>${detected}</td>
+                                            <td>${result}</td>
+                                            </tr>`
+                                html = html.concat(appendHTML)
+                            }
+                            html =html.concat("</table>")
+                            document.getElementById("scanResults").innerHTML = html
+                            document.getElementById("results").innerHTML = `VT SCAN RESULTS: ${truecount} True, ${falsecount} False`
+                       })
+                    })
+                }
+                
+            }
+            function check_status(ip, nickname){
+            var requestBody = {
+                agent_ip: ip, 
+                agent_nickname: nickname
+            }
+            axios.post(`/api/ip/check_status`, requestBody).then((response)=>{
+                var status = response.data.status
+                console.log(status)
+                if (status == 0){
+                    document.getElementById(`${nickname}`).innerHTML = ""
+                    $(`#${nickname}`).attr("class", "justify-content-center card bg-danger border border-secondary col-xl-2 col-lg-3 col-md-4 col-sm-6 m-2");
+                    document.getElementById(`${nickname}`).innerHTML =  `
+                        <div class="h-75 content_img">
+                            <img class="col-12 h-100 pt-4" src="/img/agent.png">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-text text-light">Nickname: ${nickname}</h5>
+                            <h5 class="card-text text-light">IP: ${ip}</h5>
+                            <button class="btn btn-dark" onclick="change_agent('${ip}}','${nickname}')">View</button>
+                            <button class="btn btn-dark" onclick="check_status('${ip}','${nickname}')">Check status</button>
+                        </div>
+                        `
+                }
+                if (status == 1){
+                    document.getElementById(`${nickname}`).innerHTML = ""
+                    $(`#${nickname}`).attr("class", "justify-content-center card bg-success border border-secondary col-xl-2 col-lg-3 col-md-4 col-sm-6 m-2");
+                    document.getElementById(`${nickname}`).innerHTML = `
+                        <div class="h-75 content_img">
+                            <img class="col-12 h-100 pt-4" src="/img/agent.png">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-text text-light">Nickname: ${nickname}</h5>
+                            <h5 class="card-text text-light">IP: ${ip}</h5>
+                            <button class="btn btn-dark" onclick="change_agent('${ip}','${nickname}')">View</button>
+                            <button class="btn btn-dark" onclick="check_status('${ip}','${nickname}')">Check status</button>
+                        </div>
+                    `
+                }
+            })
+        }
+        </script>
+</body>
+</html>

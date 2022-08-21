@@ -1,0 +1,40 @@
+#body {
+    background-color: black;
+    background-repeat: no-repeat;
+    height: 100%;
+}
+
+footer {
+    background-color: lightslategray;
+    color: #d5d5d5;
+    position: relative;
+    padding-top: 40px;
+    bottom: 0;
+    width: 100%;
+}
+hr {
+    background-color: black;
+}
+
+form {
+    color: white;
+
+}
+
+#google-code {
+    color: white;
+
+}
+
+.border-secondary:hover{
+    border-color: #ffbb33 !important;
+}
+
+#google-code-form, #forget-pass-otp-form, #enter-otp-form, #new-pass-form{
+    padding: 30px;
+    
+}
+
+#google-code, #otp-code , #code-form, #pass-form{
+    margin-bottom: 30px;
+}

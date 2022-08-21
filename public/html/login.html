@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Stelf on the Shelf</title>
+        <meta name="viewport" content="width:device-width, initial-scale=1.0" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+        <link href="/css/login.css" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/801503bc53.js" crossorigin="anonymous"></script>
+        <script src="/js/login.js" defer></script>
+    </head>
+
+    <body id="body">
+        <div class="row justify-content-center bg-secondary p-3 align-items-center" id="default-header">
+            <h1 class="display-2 text-warning text-center col-3">Stealth</h1>
+        </div>
+
+        <div class = "container">
+            <div class="row text-light justify-content-center" id="main_body">
+                <div class="m-3 p-4 border border-secondary col-sm-12 col-md-12 col-lg-10" id="loginBody">
+                    <h1 class="display-4">Login</h1>
+                    <form id="login-form">
+                        <div class="form-group my-4">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username">
+                        </div>
+                        <div class="form-group my-4">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password">
+                        </div>
+                        <button type="submit" class="btn btn-warning mr-auto" id="login-btn">Login</button>
+                        <button type="submit" onclick="forgetPass()" class="btn btn-warning mr-auto">Forget Password</button>
+                    </form>
+                </div>
+            </div>
+        
+
+            <div class="col-md-6 mx-auto mt-4" id="google-code">
+            </div>
+            
+            <div class="col-md-6 mx-auto mt-4">
+                <form id="otp-code">
+                </form>
+            </div>
+            
+            <div class="col-md-6 mx-auto mt-4">
+                <form id="code-form">
+                </form>
+            </div>
+
+            <div class="col-md-6 mx-auto mt-4">
+                <form id="pass-form">
+                </form>
+            </div>
+            
+
+            <div class="row text-light justify-content-center">
+                <div class="mb-4 p-4 border border-secondary col-sm-10 col-md-10 col-lg-10 w-75">
+                    <h1 class="display-4 text-center text-warning mb-3">About our FYP : Stelf on the Shelf</h1>
+                    <hr class="bg-secondary">
+                    <h4>
+                        Stelf on the Shelf is a Proof-of-Concept (POC) project, a framework that can be applied to gather runtime system configuration and status for a targeted system in stealth mode. 
+                        With the framework in place, a system administrator can monitor and gather vital system information for malware and/or intrusion detection at the EndPoint level.
+                    </h4>
+                    <hr class="bg-secondary">
+                    <h4>
+                        We aim to provide an additional layer of security to Endpoints/Linux servers such that organizations with the need to manage Linux systems/endpoints can do so easily. 
+                    </h4>
+                    <a href="/downloads/agent.zip" download="agent.zip" class="text-center">Download Agent</a> 
+                    <div class="row mt-5 justify-content-center align-items-center">
+                        <img src="/img/github.png" class="col-2">
+                        <h1 class=" col-2">
+                            <a class="text-warning" href="https://github.com/monkeyyey/stealth_monkey">Find us on GitHub!</a>
+                        </h1>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        
+
+        <footer class=" text-center text-lg-start pt-4 bg-dark text-secondary" style="background: rgb(0,0,0); background: linear-gradient(180deg, rgba(12,12,12,1) 20%, rgba(16,16,16,1) 70%, rgba(24,24,24,1) 100%)">
+            <div class="container p-4 w-100 text-center justify-content-center">
+                <div class="row col-xl-12">
+                    <div class="col-xl-8 col-lg-6 col-md-12 text-left">
+                        <h3 class="col-xl-12 text-light">About Us</h3>
+                        <div class="col-xl-12">
+                            <p>
+                                <b>Stelf on the Shelf</b> is a Proof-of-Concept (POC) project, a framework
+                                that can be applied to gather runtime system configuration and status for a targeted system
+                                in stealth mode. With the framework in place, a system administrator can monitor and gather
+                                vital system information for malware and/or intrusion detection at the EndPoint level.
+                            </p>
+                        </div>
+                    </div>
+    
+                    <div class="col-xl-4 col-md-12 text-left">
+                        <h3 class="text-light">Social Media</h3>
+                        <a href="https://github.com/monkeyyey/stelf_on_the_shelf"><i class="fab fa-instagram"></i>&nbsp Instagram</a> <br>
+                        <a href="https://www.sp.edu.sg/"><i class="fa-solid fa-graduation-cap"></i>&nbsp Singapore Polytechnic</a> <br>
+                        <a href="https://github.com/monkeyyey/stelf_on_the_shelf"><i class="fab fa-github"></i>&nbsp Find us on Github!</a> <br>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center pb-3 text-light">
+                © 2022 Copyright:
+                <a class="text-secondary" href="https://stealth.com/home">Stelf on the Shelf</a>
+            </div>
+        </footer>
+        
+    </body>
+
+    <script>
+        
+    </script>
+</html>

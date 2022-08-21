@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <link href="/css/analytics.css" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>    
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.standalone.min.css" integrity="sha512-TQQ3J4WkE/rwojNFo6OJdyu6G8Xe9z8rMrlF9y7xpFbQfW5g8aSWcygCQ4vqRiJqFsDsE1T6MoAOMJkFXlrI9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    
+    <body id="body">
+
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark" style="z-index: 3">
+            <a class="navbar-brand ml-4" href="/">Stealth</a>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-toggle="collapse"
+                data-target="#navbarContent"
+            >
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav md-auto" id="navbarr">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item pr-2">
+                        <a class="nav-link" href="/intrusion_detection">Intrusion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/security_analytics">Analytics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/file_permission">Permission</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/file_integrity">Integrity</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/custom">Custom</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/virustotal">File Scan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/register" class="nav-link">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/agents" class="nav-link">Agents</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/profiles" class="nav-link">Profiles</a>
+                    </li>
+                    <li class="bg-danger rounded ml-2">
+                        <a onclick="logout()" href="/login" class="nav-link">Logout</a>
+                    </li>
+                </ul>
+            </div>
+
+        </nav>
+        <div class="row justify-content-center" >
+            <table class="mt-4 table table-hover table-dark col-md-10 col-sm-12" id = "agent-table">
+                <thead class="text-warning">
+                <tr>
+                    <th scope="col">agent_name</th>
+                    <th scope="col">IP address</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">View</th>
+                    <th scope="col">Last processes update</th>
+                    <th scope="col">Last Status update</th>
+                    <th scope="col">Uptime</th>
+                </tr>
+                </thead>
+                <tbody id="agents">
+                
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row bg-dark justify-content-center m-4">
+            <div class="col-md-12 col-lg-9 p-3 justify-content-center text-center text-light border-bottom border-secondary" >
+                <div class="row justify-content-center">
+                    <div class="col-5 text-left m-2">
+                        <h2 id="agent_label"></h2>
+                    </div>
+
+                    <div class="col-6 text-left m-2 p-2">
+                        <button class="btn btn-warning" onclick="filterChart(300000)">Past 5 Minutes</button>
+                        <button class="btn btn-warning" onclick="filterChart(1800000)">Past Half Hour</button>
+                        <button class="btn btn-warning" onclick="filterChart(3600000)">Past Hour</button>
+                        <button class="btn btn-warning" onclick="filterChart(86400000)">Past Day</button>
+                    </div>
+                    <div class="col-12">
+                        <label for="cpu_threshold">CPU threshold</label>
+                        <select id="cpu_threshold" class="text-dark">
+                            <option value="10" onclick="change_cpu_threshold(10)">10</option>
+                            <option value="20" onclick="change_cpu_threshold(20)">20</option>
+                            <option value="30" onclick="change_cpu_threshold(30)">30</option>
+                            <option value="40" onclick="change_cpu_threshold(40)">40</option>
+                            <option value="50" onclick="change_cpu_threshold(50)">50</option>
+                            <option value="60" onclick="change_cpu_threshold(60)">60</option>
+                            <option value="70" onclick="change_cpu_threshold(70)">70</option>
+                            <option value="80" selected onclick="change_cpu_threshold(80)">80</option>
+                            <option value="90"  onclick="change_cpu_threshold(90)">90</option>
+                            <option value="100" onclick="change_cpu_threshold(100)">100</option>
+                          </select>
+                          <button onclick="change_cpu_threshold()">Change</button>
+                          <label for="mem_threshold">Memory threshold</label>
+                          <select id="mem_threshold" class="text-dark">
+                            <option value="10" onclick="change_mem_threshold(10)">10</option>
+                            <option value="20" onclick="change_mem_threshold(20)">20</option>
+                            <option value="30" onclick="change_mem_threshold(30)">30</option>
+                            <option value="40" onclick="change_mem_threshold(40)">40</option>
+                            <option value="50" onclick="change_mem_threshold(50)">50</option>
+                            <option value="60" onclick="change_mem_threshold(60)">60</option>
+                            <option value="70" onclick="change_mem_threshold(70)">70</option>
+                            <option value="80" selected onclick="change_mem_threshold(80)">80</option>
+                            <option value="90" onclick="change_mem_threshold(90)">90</option>
+                            <option value="100" onclick="change_mem_threshold(100)">100</option>
+                          </select>
+                          <button onclick="change_mem_threshold()">Change</button>
+                    </div>
+                </div>
+                <hr class="bg-secondary">
+                <div id="analytics_info" class=""></div>
+            </div>
+            
+            <div class="col-md-12 col-lg-3 justify-content-center text-light border-left border-bottom border-secondary pt-3" id="side_info">
+                <div class="p-2">
+                    <h3 class="text-center" id="cpu_header">CPU</h3>
+                </div>
+                <hr class="bg-secondary">
+                <div id="cpu_side_info"></div>
+                <div class="p-2">
+                    <h3 class="text-center" id="mem_header">Memory</h3>
+                </div>
+                <hr class="bg-secondary">
+                <div id="mem_side_info"></div>
+            </div>
+            <div class="col-12 p-3 justify-content-center text-light text-center" id="side_info">
+                <div class="row justify-content-center">
+                    <div class="col-6 border border-secondary mr-1 p-2">
+                        <h2 id="agent_processes_label"></h2>
+                    </div>
+                    <div class="col-4 border border-secondary ml-1 p-2">
+                        <div class="row">
+                            <div class="col-5"> 
+                                <h2 class="text-right">Order by:</h2>
+                            </div>
+                            <div class="col-7 text-left">
+                                <button class="btn btn-warning" onclick="order_report('pid')">PID</button>
+                                <button class="btn btn-warning" onclick="order_report('cpu')">CPU</button>
+                                <button class="btn btn-warning" onclick="order_report('mem')">Memory</button>
+                                <button class="btn btn-warning" onclick="order_report('runtime')">Runtime</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="bg-secondary">
+                <table class="table table-hover table-dark col-23" id = "agent-table">
+                    <thead class="text-warning">
+                    <tr>
+                        <th scope="col">PID</th>
+                        <th scope="col">Process</th>
+                        <th scope="col">User</th>
+                        <th scope="col">CPU/Memory Usage</th>
+                        <th scope="col">Run Time</th>
+                        <th scope="col">Command</th>
+                    </tr>
+                    </thead>
+                    <tbody id="process_list">
+                    
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <footer class=" text-center text-lg-start pt-4 bg-dark text-secondary" style="background: rgb(0,0,0); background: linear-gradient(180deg, rgba(12,12,12,1) 20%, rgba(16,16,16,1) 70%, rgba(24,24,24,1) 100%)">
+            <div class="container p-4 w-100 text-center justify-content-center">
+                <div class="row col-xl-12">
+                    <div class="col-xl-8 col-lg-6 col-md-12 text-left">
+                        <h3 class="col-xl-12 text-light">About Us</h3>
+                        <div class="col-xl-12">
+                            <p>
+                                <b>Stelf on the Shelf</b> is a Proof-of-Concept (POC) project, a framework
+                                that can be applied to gather runtime system configuration and status for a targeted system
+                                in stealth mode. With the framework in place, a system administrator can monitor and gather
+                                vital system information for malware and/or intrusion detection at the EndPoint level.
+                            </p>
+                        </div>
+                    </div>
+    
+                    <div class="col-xl-4 col-md-12 text-left">
+                        <h3 class="text-light">Social Media</h3>
+                        <a href="https://github.com/monkeyyey/stelf_on_the_shelf"><i class="fab fa-instagram"></i>&nbsp Instagram</a> <br>
+                        <a href="https://www.sp.edu.sg/"><i class="fa-solid fa-graduation-cap"></i>&nbsp Singapore Polytechnic</a> <br>
+                        <a href="https://github.com/monkeyyey/stelf_on_the_shelf"><i class="fab fa-github"></i>&nbsp Find us on Github!</a> <br>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center pb-3 text-light">
+                © 2022 Copyright:
+                <a class="text-secondary" href="https://stealth.com/home">Stelf on the Shelf</a>
+            </div>
+        </footer>
+    </body>
+
+    <script>
+        var cpu_threshold = 80
+        var mem_threshold = 80
+        var top3_cpu = 0
+        var top3_mem = 0
+        var started = 0
+        var current_agent
+        console.log('w1')
+        var current_report
+        axios.post(`/api/auth/adminaccess`, {token: localStorage.getItem('jwt_token')}).then((response) => {
+            if (response.data.access == 0){
+                window.location.href = '/'
+            }
+        })
+        function logout(){
+            localStorage.clear()
+        }
+        
+        var current_agent = ""
+        axios.get(`/api/agents/get_agents`)
+            .then((response) => {
+                const agentObject = response.data;
+                current_agent = agentObject[0]['agent_name']
+                if (agentObject[0]['last_process_report']){
+                    document.getElementById("agent_processes_label").innerHTML = `<h2>Process Report for '${current_agent}'</h2>`
+                    axios.get(`/api/analytics/get_process_report/${current_agent}`).then((response2)=>{
+                        var report = response2.data
+                        fill_process_table(report)
+                    })
+                }
+                else{
+                    document.getElementById("agent_processes_label").innerHTML = `<h2>No Report available for '${current_agent}'</h2>`
+                }
+                document.getElementById("agent_label").innerHTML = `<h2>Security Analytics for '${current_agent}'</h2>`
+                var status = ""
+                var current_time = Math.floor(Date.now() / 1000)
+                for (const x in agentObject) {
+                    if(agentObject[x]['scope']){
+                        if (agentObject[x]['scope'].includes("1")){
+                            try{
+                                var last_status_update = parseInt(agentObject[x]['last_status_update'].split("|")[1])
+                                if ((current_time - last_status_update) < 60){
+                                    status = "Running"
+                                }
+                                else{
+                                    status = "Unreachable"
+                                }
+                            }
+                            catch{
+                                status = "Unreachable"
+                            }
+                            if (agentObject[x]['last_process_report']){
+                                var timestamp = agentObject[x]['last_process_report']
+                            }
+                            else{
+                                var timestamp = "No process report"
+                            }
+                            if(!agentObject[x]['last_status_update']){
+                                var last_status_update_time = "No status update available"
+                            }
+                            else{
+                                var last_status_update_time = agentObject[x]['last_status_update'].split("|")[0]
+                            }
+                            if(!agentObject[x]['uptime'] || status =="Unreachable"){
+                                var uptime = "No uptime available"
+                            }
+                            else{
+                                var uptime = agentObject[x]['uptime'].slice(0, -4)
+                            }
+                            $("#agents").append(`
+                                <tr>
+                                    <td>${agentObject[x]['agent_name']}</td>
+                                    <td>${agentObject[x]['agent_ip']}</td>
+                                    <td><span class="bi bi-circle-fill" id="${status}"> ${status}</span></td>
+                                    <td><button class="btn btn-warning btn-sm" onclick="change_agent('${agentObject[x]['agent_name']}')">View</button></td>
+                                    <td><p>${timestamp}</p></td>
+                                    <td>${last_status_update_time}</td>
+                                    <td>${uptime}</td>
+                                </tr>
+                            `);
+                        }
+                    }
+                }    
+                started = 1
+                console.log('w2')
+                axios.get(`/api/analytics/cpu_mem/${current_agent}`).then((response) => {
+                    const myObject = response.data;
+                    localStorage.setItem('cpu_mem',JSON.stringify(myObject))
+                    var relative_array = []
+                    var cpu_array = []
+                    var mem_array = []
+                    var time_array = []
+                    for (n in myObject){
+                        time_array.push(myObject[n]['created_at'])
+                        cpu_array.push(myObject[n]['cpu_usage'])
+                        mem_array.push(myObject[n]['memory_usage'])
+                        relative_array.push(n)
+                    }
+                    var cpu_trace = {
+                        x: time_array,
+                        y: cpu_array,
+                        mode: 'lines',
+                        name: 'CPU usage'
+                    } 
+                    var mem_trace = {
+                        x: time_array,
+                        y: mem_array,
+                        mode: 'lines',
+                        name: 'Memory Usage'
+                    } 
+                    var layout = {
+                        autosize: true,
+                        height:700
+                    }
+                    var data = [cpu_trace, mem_trace]
+                    var config = {responsive: true}
+                    Plotly.newPlot('analytics_info', data, layout, config)
+                    }).catch((error) => {
+                        console.log(error);
+                });
+            })
+        
+        setInterval(function(){
+            console.log('dd')
+            if (started == 1){
+                axios.get(`/api/analytics/cpu_mem/${current_agent}`).then((response) => {
+                    Plotly.purge("analytics_info")
+                    const myObject = response.data;
+                    localStorage.setItem('cpu_mem',JSON.stringify(myObject))
+                    var relative_array = []
+                    var cpu_array = []
+                    var mem_array = []
+                    var time_array = []
+                    for (n in myObject){
+                        time_array.push(myObject[n]['created_at'])
+                        cpu_array.push(myObject[n]['cpu_usage'])
+                        mem_array.push(myObject[n]['memory_usage'])
+                        relative_array.push(n)
+                    }
+                    var cpu_trace = {
+                        x: time_array,
+                        y: cpu_array,
+                        mode: 'lines',
+                        name: 'CPU usage'
+                    } 
+                    var mem_trace = {
+                        x: time_array,
+                        y: mem_array,
+                        mode: 'lines',
+                        name: 'Memory Usage'
+                    } 
+                    var layout = {
+                        autosize: true,
+                        height:700
+                    }
+                    var data = [cpu_trace, mem_trace]
+                    var config = {responsive: true}
+                    Plotly.newPlot('analytics_info', data, layout, config)
+                    }).catch((error) => {
+                        console.log(error);
+                });
+                
+            }
+        }, 10000)
+        function filterChart(times) {
+            event.preventDefault();
+            var times = getTimes(times)
+            
+            console.log(times)
+            var minuteView = {
+                xaxis: {
+                    type: 'date',
+                    range: [times.starting, times.current],
+                }
+            }
+               
+            Plotly.relayout('analytics_info', minuteView)
+        }
+    
+        function getTimes(time) {
+            var unix_timestamp = Date.now()
+            var current_time = new Date(unix_timestamp)
+            var start_time = new Date(unix_timestamp - time)
+            console.log(current_time)
+            var current_month = new String(current_time.getMonth() + 1)
+            var current_day = new String(current_time.getDate())
+            var current_minutes = new String(current_time.getMinutes())
+            var current_seconds = new String(current_time.getSeconds())
+            var current_hours = new String(current_time.getHours())
+
+            var start_month = new String(start_time.getMonth() + 1)
+            var start_day = new String(start_time.getDate())
+            var start_minutes = new String(start_time.getMinutes())
+            var start_seconds = new String(start_time.getSeconds())
+            var start_hours = new String(start_time.getHours())
+
+            var current_month = time_format(current_month)
+            var current_day = time_format(current_day)
+            var current_minutes =time_format(current_minutes)
+            var current_seconds = time_format(current_seconds)
+            var current_hours = time_format(current_hours)
+
+            var start_month = time_format(start_month)
+            var start_day = time_format(start_day)
+            var start_minutes = time_format(start_minutes)
+            var start_seconds = time_format(start_seconds)
+            var start_hours = time_format(start_hours)
+            
+            var current = current_time.getFullYear() + "-" + current_month + "-" + current_day + " " + current_hours + ":" + current_minutes + ":" + current_seconds
+            var starting = start_time.getFullYear() + "-" + start_month + "-" + start_day + " " + start_hours + ":" + start_minutes + ":" + start_seconds
+
+            return { current, starting }
+        
+            
+        }
+        function time_format(time){
+            if (time.length == 1){
+                time = "0" + time
+            }
+            return time
+        }
+
+        function fill_process_table(report_data){
+            report_data = report_data.split("\n")
+            report_data.shift()
+            report_data.pop()
+            var cpu_list = []
+            var mem_list = []
+            for (x in report_data){
+                report_line = report_data[x].split(/\s+/)
+                var command = report_line.slice(10)
+                if (command[0].startsWith("/usr")){
+                    var process = command[0].split("/")
+                    process = process.slice(-1)[0] 
+                }
+                else{
+                    process = command[0]
+                }
+                command = command.join(" ")
+                cpu_list.push(parseFloat(report_line[2]))
+                mem_list.push(parseFloat(report_line[3]))
+                if(report_line[2] != "0.0" || report_line[3] != "0.0"){
+                    $("#process_list").append(`
+                        <tr>
+                            <td>${report_line[1]}</td>
+                            <td>${process}</td>
+                            <td>${report_line[0]}</td>
+                            <td>${report_line[2]}%/${report_line[3]}%</td>
+                            <td>${report_line[9]}</td>
+                            <td>${command}</td>
+                        </tr>
+                    `);
+                }
+            }
+            current_report = report_data
+            var cpu_index = largest(cpu_list);
+            var mem_index = largest(mem_list);
+            var cpu_html = ''
+            var mem_html = ''
+            top3_cpu = 0
+            top3_mem = 0
+            for (n in cpu_index){
+                var report_line = report_data[cpu_index[n]].split(/\s+/)
+                var command = report_line.slice(10)
+                if (command[0].startsWith("/usr")){
+                    var process = command[0].split("/")
+                    process = process.slice(-1)[0] 
+                }
+                else{
+                    process = command[0]
+                }
+                command = command.join(" ")
+                top3_cpu += parseFloat(report_line[2])
+                cpu_html += `<p><strong>Process:</strong> ${process}<br><strong>Command:</strong> ${command}<br><strong>CPU Usage:</strong> ${report_line[2]}%<br><strong>Memory Usage:</strong> ${report_line[3]}%<br><strong>Runtime:</strong> ${report_line[9]}</p><hr class="bg-secondary">`
+            }
+            for (n in mem_index){
+                var report_line = report_data[mem_index[n]].split(/\s+/)
+                var command = report_line.slice(10).join(" ")
+                top3_mem += parseFloat(report_line[3])
+                mem_html += `<p><strong>Process:</strong> ${process}<br><strong>Command:</strong> ${command}<br><strong>Memory Usage:</strong> ${report_line[3]}%<br><strong>CPU Usage:</strong> ${report_line[2]}%<br><strong>Runtime:</strong> ${report_line[9]}</p><hr class="bg-secondary">`
+            }
+            document.getElementById("mem_side_info").innerHTML = mem_html
+            document.getElementById("cpu_side_info").innerHTML = cpu_html
+            if (top3_cpu >= cpu_threshold){
+                document.getElementById("cpu_header").innerHTML = "!! CPU Usage: HIGH !!"
+                document.getElementById("cpu_header").parentElement.className = "bg-danger p-2"
+            }
+            else{
+                document.getElementById("cpu_header").innerHTML = "CPU Usage: Normal"
+                document.getElementById("cpu_header").parentElement.className = "bg-success p-2"
+            }
+            console.log(top3_mem)
+            if (top3_mem >= mem_threshold){
+                document.getElementById("mem_header").innerHTML = "!! Memory Usage: HIGH !!" 
+                document.getElementById("mem_header").parentElement.className = "bg-danger p-2"
+            }
+            else{
+                document.getElementById("mem_header").innerHTML = "Memory Usage: Normal" 
+                document.getElementById("mem_header").parentElement.className = "bg-success p-2"
+            }
+        }
+        function change_cpu_threshold(){
+            var threshold = $("#cpu_threshold :selected").text()
+            console.log(threshold)
+            cpu_threshold = threshold
+            if (top3_cpu >= cpu_threshold){
+                document.getElementById("cpu_header").innerHTML = "!! CPU Usage: HIGH !!"
+                document.getElementById("cpu_header").parentElement.className = "bg-danger p-2"
+            }
+            else{
+                document.getElementById("cpu_header").innerHTML = "CPU Usage: Normal"
+                document.getElementById("cpu_header").parentElement.className = "bg-success p-2"
+            }
+            
+        }
+        function change_mem_threshold(){
+            var threshold = $("#mem_threshold :selected").text()
+            console.log(threshold)
+            console.log(top3_mem)
+            mem_threshold = threshold
+            if (top3_mem >= mem_threshold){
+                document.getElementById("mem_header").innerHTML = "!! Memory Usage: HIGH !!" 
+                document.getElementById("mem_header").parentElement.className = "bg-danger p-2"
+            }
+            else{
+                document.getElementById("mem_header").innerHTML = "Memory Usage: Normal" 
+                document.getElementById("mem_header").parentElement.className = "bg-success p-2"
+            }
+        }
+        function order_report(order_variable){
+            event.preventDefault()
+            if (typeof current_report[0] == "string"){
+                for (x in current_report){
+                    var split = current_report[x].split(/\s+/)
+                    var first10 = split.slice(0, 10)
+                    var command = split.slice(10).join(" ")
+                    first10.push(command)
+                    current_report[x] = first10
+                }
+            }
+            document.getElementById('process_list').innerHTML = ""
+            var new_report_list = []
+            var counter = 0
+            var type
+            if (order_variable == "pid") type = 1
+            if (order_variable == "cpu") type = 2
+            if (order_variable == "mem") type = 3
+            if (order_variable == "runtime"){
+                for (row in current_report){
+                    if (row == 0){
+                        new_report_list.push(current_report[row])
+                    }
+                    else{
+                        while (counter <= new_report_list.length - 1){
+                            if(parseFloat(current_report[row][9].replace(":","")) < parseFloat(new_report_list[counter][9].replace(":",""))) {
+                                counter += 1
+                            }
+                            else{
+                                break;
+                            }
+                        }
+                        new_report_list.splice(counter, 0, current_report[row])
+                        counter = 0
+                    }
+                }
+            }
+            else{
+                for (row in current_report){
+                    if (row == 0){
+                        new_report_list.push(current_report[row])
+                    }
+                    else{
+                        while (counter <= new_report_list.length - 1){
+                            if(parseFloat(current_report[row][type]) < parseFloat(new_report_list[counter][type])) {
+                                counter += 1
+                            }
+                            else{
+                                break;
+                            }
+                        }
+                        new_report_list.splice(counter, 0, current_report[row])
+                        counter = 0
+                    }
+                }
+            }
+            for (x in new_report_list){
+                var split_line = new_report_list[x][10].split(/\s+/)
+                if (split_line[0].startsWith("/usr")){
+                    var process = split_line[0].split("/")
+                    process = process.slice(-1)[0] 
+                }
+                else{
+                    process = split_line[0]
+                }
+                command = split_line.join(" ")
+                $("#process_list").append(`
+                <tr>
+                    <td>${new_report_list[x][1]}</td>
+                    <td>${process}</td>
+                    <td>${new_report_list[x][0]}</td>
+                    <td>${new_report_list[x][2]}%/${new_report_list[x][3]}%</td>
+                    <td>${new_report_list[x][9]}</td>
+                    <td>${command}</td>
+                </tr>
+            `);
+            }
+        }
+        function largest(arr) {
+            largArr = [0,0,0]
+    
+            for (i = 0; i < arr.length; i++) {
+                if (arr[i] > largArr[0]) {
+                    largArr[0] = arr[i];
+                }
+            }
+    
+            for (i = 0; i < arr.length; i++) {
+                if (arr[i] > largArr[1]
+                    && arr[i] < largArr[0]) {
+                    largArr[1] = arr[i];
+                }
+            }
+    
+            for (i = 0; i < arr.length; i++) {
+                if (arr[i] > largArr[2]
+                    && arr[i] < largArr[1]) {
+                    largArr[2] = arr[i];
+                }
+            }
+            return [arr.indexOf(largArr[0]),arr.indexOf(largArr[1]),arr.indexOf(largArr[2])]
+        }
+
+        function change_agent(nickname){
+            event.preventDefault()
+            current_agent = nickname
+            document.getElementById("analytics_info").innerHTML = ""
+            document.getElementById("agent_label").innerHTML = `<h2>Security Analytics for '${nickname}'</h2>`
+            axios.get(`/api/analytics/get_process_report/${nickname}`).then((response)=>{
+                var report = response.data
+                document.getElementById("process_list").innerHTML = ``
+                if (report){
+                    document.getElementById("agent_processes_label").innerHTML = `<h2>Process Report for '${nickname}'</h2>`
+                    fill_process_table(report)
+                }
+                else{
+                    document.getElementById("agent_processes_label").innerHTML = `<h2>No Report available for '${nickname}'</h2>`
+                }
+                
+            })
+            axios.get(`/api/analytics/cpu_mem/${nickname}`).then((response) => {
+                const myObject = response.data;
+                localStorage.setItem('cpu_mem',JSON.stringify(myObject))
+                var relative_array = []
+                var cpu_array = []
+                var mem_array = []
+                var time_array = []
+                for (n in myObject){
+                    time_array.push(myObject[n]['created_at'])
+                    cpu_array.push(myObject[n]['cpu_usage'])
+                    mem_array.push(myObject[n]['memory_usage'])
+                    relative_array.push(n)
+                }
+                var cpu_trace = {
+                    x: time_array,
+                    y: cpu_array,
+                    mode: 'lines',
+                    name: 'CPU usage'
+                } 
+                var mem_trace = {
+                    x: time_array,
+                    y: mem_array,
+                    mode: 'lines',
+                    name: 'Memory usage'
+                } 
+                var layout = {
+                    autosize: true,
+                    height:700
+                }
+                var data = [cpu_trace, mem_trace]
+                var config = {responsive: true}
+                Plotly.newPlot('analytics_info', data, layout, config)
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        }
+
+        function check_status(ip, agent_name){
+            event.preventDefault()
+            var get_element = document.getElementById(`${agent_name}_status`)
+            var get_class = get_element.className
+            console.log(get_class)
+            if (get_class.includes("Unreachable") ||get_class.includes("Reachable")){
+                var requestBody = {
+                    agent_ip: ip, 
+                }
+                axios.post(`/api/agents/check_status`, requestBody).then((response)=>{
+                    var status = response.data.status
+                    if (status == 'Reachable'){
+                        var element = document.getElementById(`${agent_name}_status`);
+                        element.className = `${status}`
+                        element.innerHTML = `${status}`
+                        alert(`${agent_name} is reachable!`)
+                    }
+                    else{
+                        var element = document.getElementById(`${agent_name}_status`);
+                        element.className = `${status}`
+                        element.innerHTML = `${status}`
+                        alert(`${agent_name} is unreachable!`)
+                    }
+                })
+            }
+            else{
+                alert(`${agent_name} is already running!`)
+            }
+        }
+      </script>
+</html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>    
+        <link rel="stylesheet" href="/css/custom.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body id="body">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark" style="z-index: 3">
+            <a class="navbar-brand ml-4" href="/">Stealth Monkey</a>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-toggle="collapse"
+                data-target="#navbarContent"
+            >
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav md-auto" id="navbarr">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item pr-2">
+                        <a class="nav-link" href="/intrusion_detection">Intrusion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/security_analytics">Analytics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/file_permission">Permission</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/file_integrity">Integrity</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/custom">Custom</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/virustotal">File Scan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/register" class="nav-link">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/agents" class="nav-link">Agents</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/profiles" class="nav-link">Profiles</a>
+                    </li>
+                    <li class="bg-danger rounded ml-2">
+                        <a onclick="logout()" href="/login" class="nav-link">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="row justify-content-center" >
+            <table class="mt-4 table table-hover table-dark col-md-10 col-sm-12" id = "agent-table">
+                <thead class="text-warning">
+                <tr>
+                    <th scope="col">Agent Name</th>
+                    <th scope="col">IP address</th>
+                    <th scope="col">Port</th>
+                    <th scope="col">Status</th>
+                    <th>Change Agent</th>
+                    <th scope="col">Last Status update</th>
+                    <th scope="col">Uptime</th>
+                </tr>
+                </thead>
+                <tbody id="agents"></tbody>
+            </table>
+        </div>
+          
+        <div class="row bg-dark p-4">
+                <div id="agent_label" class="col-12">
+  
+                </div>
+                <div class="p-3 col-6">
+                    <h3 class="text-light ">Remote Access</h3>
+                    <div style="background-color: lightblue;
+                    height: 400px;  
+                    overflow-y: auto" id="RA_output_section">
+                    </div>
+                    <br>
+                    <p><input type = "text" id = "command_toSend" class="form-control" /></p>
+                    <input type = "submit" onclick="agent_action('tunnel')"/>
+                </div>
+                <div class="p-3 col-6">
+                    <h3 class="text-light">Upload file to agent</h3>
+                    <form  id="upload_onefile" >
+                    <input type = "file" name = "file" id="onefile"/>
+                    <input type = "submit" onclick="agent_action('Upload_File')"/>
+                    </form>
+                    <br>
+                    <style>
+                        table, th, td {
+                          border: 1px solid white;
+                          border-collapse: collapse;
+                        }
+                    </style>
+                    <p id="Records" class="text-light"></p>
+                </div>
+                <br>
+                <div class="p-3 col-6">
+                    <h3 class="text-light">Retrieve a File</h3>
+                    <p><input type = "text" id = "filepath" class="form-control" placeholder="Enter the Full Filepath of file to retrieve"/></p>
+                    <p><input type = "text" id = "filename_tosave" class="form-control" placeholder="Enter the filename to be saved as"/></p>
+                    <input type = "submit" onclick="agent_action('retrieve_file')"/>
+                </div>
+      
+        </div>
+  
+          <div class="float-right">
+              
+              
+           </div> 
+           
+           
+           <footer class=" text-center text-lg-start pt-4 bg-dark text-secondary" style="background: rgb(0,0,0); background: linear-gradient(180deg, rgba(12,12,12,1) 20%, rgba(16,16,16,1) 70%, rgba(24,24,24,1) 100%)">
+            <div class="container p-4 w-100 text-center justify-content-center">
+                <div class="row col-xl-12">
+                    <div class="col-xl-8 col-lg-6 col-md-12 text-left">
+                        <h3 class="col-xl-12 text-light">About Us</h3>
+                        <div class="col-xl-12">
+                            <p>
+                                <b>Stelf on the Shelf</b> is a Proof-of-Concept (POC) project, a framework
+                                that can be applied to gather runtime system configuration and status for a targeted system
+                                in stealth mode. With the framework in place, a system administrator can monitor and gather
+                                vital system information for malware and/or intrusion detection at the EndPoint level.
+                            </p>
+                        </div>
+                    </div>
+    
+                    <div class="col-xl-4 col-md-12 text-left">
+                        <h3 class="text-light">Social Media</h3>
+                        <a href="https://github.com/monkeyyey/stelf_on_the_shelf"><i class="fab fa-instagram"></i>&nbsp Instagram</a> <br>
+                        <a href="https://www.sp.edu.sg/"><i class="fa-solid fa-graduation-cap"></i>&nbsp Singapore Polytechnic</a> <br>
+                        <a href="https://github.com/monkeyyey/stelf_on_the_shelf"><i class="fab fa-github"></i>&nbsp Find us on Github!</a> <br>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center pb-3 text-light">
+                © 2022 Copyright:
+                <a class="text-secondary" href="https://stealth.com/home">Stelf on the Shelf</a>
+            </div>
+        </footer>
+
+    <script>
+        axios.post(`/api/auth/adminaccess`, {token: localStorage.getItem('jwt_token')}).then((response) => {
+            if (response.data.access == 0){
+                window.location.href = '/'
+            }
+        })
+
+        window.onbeforeunload = function (e) {
+            localStorage.removeItem("current_agent_ip");
+        };
+        function logout(){
+            localStorage.clear()
+        }
+        var current_agent
+        var current_ip = ""
+        axios.get(`/api/agents/get_agents`).then((response) => {
+            const agentObject = response.data;
+            var status = ""
+            var current_time = Math.floor(Date.now() / 1000)
+            current_agent = agentObject[0]['agent_name']
+            var ip = agentObject[0]['agent_ip']
+            var port = agentObject[0]['port_number']
+            var baseUrl = `https://${ip}:${port}`
+            localStorage.setItem("baseUrl",baseUrl)
+            document.getElementById("agent_label").innerHTML = `<h2 class="text-light">Custom functions for '${current_agent}'</h2>`
+            for (const x in agentObject) {
+                try{
+                    var last_status_update = parseInt(agentObject[x]['last_status_update'].split("|")[1])
+                    if ((current_time - last_status_update) < 60){
+                        status = "Running"
+                    }
+                    else{
+                        status = "Unreachable"
+                    }
+                }
+                catch{
+                    status = "Unreachable"
+                }
+                if(!agentObject[x]['last_status_update']){
+                    var last_status_update_time = "No status update available"
+                }
+                else{
+                    var last_status_update_time = agentObject[x]['last_status_update'].split("|")[0]
+                }
+                if(!agentObject[x]['uptime'] || status =="Unreachable"){
+                    var uptime = "No uptime available"
+                }
+                else{
+                    var uptime = agentObject[x]['uptime'].slice(0, -4)
+                }
+                $("#agents").append(`
+                    <tr>
+                        <td>${agentObject[x]['agent_name']}</td>
+                        <td>${agentObject[x]['agent_ip']}</td>
+                        <td>${agentObject[x]['port_number']}</td>
+                        <td><span class="bi bi-circle-fill ${status}" id="${agentObject[x]['agent_name']}_status">${status}</span></td>
+                        <td><button class="btn btn-warning" onclick="change_agent('${agentObject[x]['agent_ip']}','${agentObject[x]['agent_name']}','${agentObject[x]['port_number']}')">Select</button></td>
+                        <td>${last_status_update_time}</td>
+                        <td>${uptime}</td>
+                    </tr>
+                `);  
+            }    
+        })
+        
+        //function to be run when agent is selected
+        function change_agent(ip, nickname, port){
+            document.getElementById("agent_label").innerHTML = `<h2 class="text-light">Custom Functions for '${nickname}'</h2>`
+            var baseUrl = `https://${ip}:${port}`
+            localStorage.setItem("baseUrl",baseUrl)
+            current_agent = nickname
+            axios.get(`/api/RA/records/${nickname}`)
+                .then((response) => {
+                    const records = response.data;
+                    console.log(records);
+                    var html =`<h3>Records</h3>
+                                        <table class="text-light">
+                                        <tr>
+                                        <th>File</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Sent By</th>
+                                        </tr>`
+                    for(let i =0; i <records.length; i++){
+                        filename =  records[i]['script_sent'];
+                        status = records[i]['status'];
+                        date_sent = records[i]['date'];
+                        sent_by = records[i]['sent_by']
+                        appendHTML =`<tr>
+                                    <td>${filename}</td>
+                                    <td>${status}</td>
+                                    <td>${date_sent}</td>
+                                    <td>${sent_by}</td>
+                                    </tr>`
+                        html = html.concat(appendHTML)
+                    }
+                    html =html.concat("</table>")
+                    document.getElementById("Records").innerHTML = html
+                })
+                .catch((error) => {
+                console.log(error);
+                });
+
+        }
+        function agent_action(api){
+            event.preventDefault()
+            if(api == "Upload_File"){
+                event.preventDefault()
+                var formData = new FormData();
+                var filetosend = document.getElementById('onefile');
+                formData.append("file", filetosend.files[0]);
+                baseUrl = localStorage.getItem('baseUrl');
+                user = JSON.parse(localStorage.getItem('user'));
+                console.log(typeof user)
+                adminName = user['username']
+                console.log(adminName)
+                formData.append("baseUrl", baseUrl);
+                formData.append("adminName", adminName);
+                formData.append("agent_name", current_agent);
+                console.log(formData);
+                axios.post(`/api/RA/send_file`, formData, {
+                    headers: {
+                    'Content-Type': 'multipart/form-data'
+                    }
+                    }).then((response)=>{console.log(response)})
+                // axios.post(`${adminurl}/api/RA/send_file`, {test:"test"}, ).then((response)=>{console.log(response)})
+            }
+            
+            else if(api == "tunnel"){
+                event.preventDefault()
+                var command = document.getElementById("command_toSend").value
+                var baseUrl = localStorage.getItem('baseUrl');
+                var requestBody ={
+                    baseUrl: baseUrl,
+                    command: command
+                }
+
+                var html = `<p>--------------</p>
+                            <p>Admin : ${command}</p>
+                            <p>--------------</p>`
+                
+                RA_output = document.getElementById("RA_output_section")
+                RA_output.innerHTML = RA_output.innerHTML + html
+
+            
+
+                axios.post(`/api/RA/remote`,requestBody).then((response)=>{
+                    response = JSON.stringify(response["data"])
+                    console.log(response)
+                    var resHTML = `<p>--------------</p>
+                            <p>Response : ${response}</p>
+                            <p>--------------</p>`
+                    
+                    res_output=document.getElementById("RA_output_section")
+                    res_output.innerHTML = res_output.innerHTML + resHTML
+                })
+            }
+            else if( api = "retrieve_file"){
+                var filepath = document.getElementById("filepath").value;
+                var save_filename = document.getElementById("filename_tosave").value;
+                var baseUrl = localStorage.getItem('baseUrl');
+                var reqbody = {
+                    filepath : filepath,
+                    baseUrl: baseUrl,
+                    save_filename: save_filename
+                }
+                axios.post(`/api/RA/retrieve_file`, reqbody).then((response) => {
+                    console.log(response);
+                })
+            }
+        }
+        function check_status(ip, agent_name){
+            event.preventDefault()
+            var get_element = document.getElementById(`${agent_name}_status`)
+            var get_class = get_element.className
+            console.log(get_class)
+            if (get_class.includes("Unreachable") ||get_class.includes("Reachable")){
+                var requestBody = {
+                    agent_ip: ip, 
+                }
+                axios.post(`/api/agents/check_status`, requestBody).then((response)=>{
+                    var status = response.data.status
+                    if (status == 'Reachable'){
+                        var element = document.getElementById(`${agent_name}_status`);
+                        element.className = `${status}`
+                        element.innerHTML = `${status}`
+                        alert(`${agent_name} is reachable!`)
+                    }
+                    else{
+                        var element = document.getElementById(`${agent_name}_status`);
+                        element.className = `${status}`
+                        element.innerHTML = `${status}`
+                        alert(`${agent_name} is unreachable!`)
+                    }
+                })
+            }
+            else{
+                alert(`${agent_name} is already running!`)
+            }
+        }
+    </script>
+</html>

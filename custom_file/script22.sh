@@ -1,0 +1,1 @@
+echo "hello ryan" >> /var/lib/agent/dingdong.txt

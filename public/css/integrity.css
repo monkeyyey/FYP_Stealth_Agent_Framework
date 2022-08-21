@@ -1,0 +1,42 @@
+#body {
+    background-color: black;
+    background-repeat: no-repeat;
+    height: 100%;
+}
+
+footer {
+    background-color: lightslategray;
+    color: #d5d5d5;
+    position: relative;
+    padding-top: 40px;
+    bottom: 0;
+    width: 100%;
+}
+hr {
+    background-color: black;
+}
+a:hover {
+    color: #ffbb33 !important;
+}
+div:hover{
+    border-color: #ffbb33 !important ;
+    /* color: #ffbb33 !important; */
+    
+}
+.Unreachable{
+    color: #ff4444;
+}
+
+.Reachable{
+    color: #ffbb33;
+}
+.Running{
+    color: #00C851;
+}
+td {
+    background-color: #454d55
+}
+
+tr :hover {
+    background-color: #757575;
+}

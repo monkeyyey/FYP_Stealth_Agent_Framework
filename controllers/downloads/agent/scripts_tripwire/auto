@@ -1,0 +1,3 @@
+sudo tripwire --check
+sudo twprint -m r --twrfile /var/lib/tripwire/report/$(sudo ls /var/lib/tripwire/report -rt | tail -n 1) > /var/lib/agent/tripwire/$(hostname)-$(date +"%Y%m%d-%H%M%S").txt
+sudo python3 /var/lib/agent/scripts_tripwire/compare_linux.py $(ls /var/lib/agent/tripwire/ -rt | tail -n 2 | head -n 1) $(ls /var/lib/agent/tripwire/ -rt | tail -n 1)

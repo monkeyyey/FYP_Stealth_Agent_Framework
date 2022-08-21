@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" type="text/css" href="/css/register.css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="/js/register.js" defer></script>
+    </head>
+    
+    <body id="body">
+
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark" style="z-index: 3">
+            <a class="navbar-brand ml-4" href="/">Stealth</a>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-toggle="collapse"
+                data-target="#navbarContent"
+            >
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav md-auto" id="navbarr">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item pr-2">
+                        <a class="nav-link" href="/intrusion_detection">Intrusion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/security_analytics">Analytics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/file_permission">Permission</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/file_integrity">Integrity</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/custom">Custom</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/virustotal">File Scan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/register" class="nav-link">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/agents" class="nav-link">Agents</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/profiles" class="nav-link">Profiles</a>
+                    </li>
+                    <li class="bg-danger rounded ml-2">
+                        <a onclick="logout()" href="/login" class="nav-link">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="row text-light justify-content-center">
+            <div class="m-3 p-4 col-sm-10 col-md-10 col-lg-7 text-center">
+                <h4>To create a new admin, you will have to authorize the registration with the credentials of an existing administrator</h4>
+            </div>
+        </div>
+
+        <div class="row text-light justify-content-center" id="main_body">
+
+            <div class="m-3 p-4 border border-secondary col-sm-10 col-md-5 col-lg-4" id="registerBody" onmouseleave="regbordernormal(this)" onmouseenter="regborderyellow(this)" >
+                <h1 class="display-4">New Admin</h1>
+                <form id="register-form" class="row">
+                    <div class="form-group mb-2 mt-4 col-12">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username">
+                        <small></small>
+                    </div>
+                    <div class="form-group my-2 col-12">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="at least 8 Characters">
+                        <small></small>
+                    </div>
+                    <div class="form-group my-2 col-12">
+                        <label for="password">Password Again</label>
+                        <input type="password" class="form-control" id="retype_password" placeholder="at least 8 Characters">
+                        <small></small>
+                    </div>
+                    <div class="form-group my-2 col-12">
+                        <label for="Email">Email</label>
+                        <input type="text" class="form-control" id="Email">
+                        <small></small>
+                    </div>
+                    <div class="form-group mt-2 mb-1 col-12">
+                        <label for="Phone_Number">Phone Number</label>
+                        <input type="text" class="form-control" id="Phone_Number">
+                        <small></small>
+                    </div>
+                </form>
+            </div>
+
+            <div class="m-3 p-4 border border-secondary col-sm-10 col-md-5 col-lg-3" id="authBody" onmouseleave="authbordernormal(this)" onmouseenter="authborderyellow(this)">
+                <h2 class="display-4">Authorization</h2>
+                <form id="auth-form" class="row">
+                    <div class="form-group mb-2 mt-4 col-12">
+                        <label for="username">Admin Username</label>
+                        <input type="text" class="form-control" id="admin_username">
+                        <small></small>
+                    </div>
+                    <div class="form-group my-2 col-12">
+                        <label for="password">Admin Password</label>
+                        <input type="password" class="form-control" id="admin_password" placeholder="at least 8 Characters">
+                        <small></small>
+                    </div>
+                    <div class="justify-content-center p-5 mt-2 col-12">
+                        <div class="col-12 border border-secondary text-center" onmouseleave="submitbordernormal(this)" onmouseenter="submitborderyellow(this)" onclick="register()">
+                            <h2 class="display-4 w-100">Create</h2>
+                            <h2 class="display-4 w-100">Administrator</h2>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="container mx-auto mt-4" id="qr-code">
+        
+        </div>
+    </body>
+    <footer class=" text-center text-lg-start pt-4 bg-dark text-secondary" style="background: rgb(0,0,0); background: linear-gradient(180deg, rgba(12,12,12,1) 20%, rgba(16,16,16,1) 70%, rgba(24,24,24,1) 100%)">
+        <div class="container p-4 w-100 text-center justify-content-center">
+            <div class="row col-xl-12">
+                <div class="col-xl-8 col-lg-6 col-md-12 text-left">
+                    <h3 class="col-xl-12 text-light">About Us</h3>
+                    <div class="col-xl-12">
+                        <p>
+                            <b>Stelf on the Shelf</b> is a Proof-of-Concept (POC) project, a framework
+                            that can be applied to gather runtime system configuration and status for a targeted system
+                            in stealth mode. With the framework in place, a system administrator can monitor and gather
+                            vital system information for malware and/or intrusion detection at the EndPoint level.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-12 text-left">
+                    <h3 class="text-light">Social Media</h3>
+                    <a href="https://github.com/monkeyyey/stelf_on_the_shelf"><i class="fab fa-instagram"></i>&nbsp Instagram</a> <br>
+                    <a href="https://www.sp.edu.sg/"><i class="fa-solid fa-graduation-cap"></i>&nbsp Singapore Polytechnic</a> <br>
+                    <a href="https://github.com/monkeyyey/stelf_on_the_shelf"><i class="fab fa-github"></i>&nbsp Find us on Github!</a> <br>
+                </div>
+            </div>
+        </div>
+        <div class="text-center pb-3 text-light">
+            © 2022 Copyright:
+            <a class="text-secondary" href="https://stealth.com/home">Stelf on the Shelf</a>
+        </div>
+    </footer>
+
+</html>

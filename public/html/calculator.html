@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <link href="/css/calculator.css" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/801503bc53.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body id="body">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark" style="z-index: 3">
+            <a class="navbar-brand ml-4" href="/">Stealth</a>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-toggle="collapse"
+                data-target="#navbarContent"
+            >
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav md-auto" id="navbarr">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item pr-2">
+                        <a class="nav-link" href="/intrusion">Intrusion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/security_analytics">Security Analytics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/perm">Permission</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/file_integrity">File Integrity</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/custom">Custom</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/register" class="nav-link">Make New Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/profiles" class="nav-link">Profiles</a>
+                    </li>
+                    <li class="bg-danger rounded ml-2">
+                        <a onclick="logout()" href="/login" class="nav-link">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div id="calculator" class="row justify-content-center mx-auto w-50 my-4">
+            <div id="value" class="col-4 bg-dark text-light border border-secondary text-center h2 p-2 mb-2"></div>
+            <div class="col-1 text-light border border-secondary text-center h2 p-2 mb-2 bg-danger" onclick="back(1)">←</div>
+            <div id="operator" class="col-2 bg-dark text-light border border-secondary text-center h2 p-2 mb-2"></div>
+            <div id="next" class="col-4 bg-dark text-light border border-secondary text-center h2 p-2 mb-2"></div>
+            <div class="col-1 text-light border border-secondary text-center h2 p-2 mb-2 bg-danger" onclick="back(2)">←</div>
+            <div class="col-3 bg-dark text-light border border-secondary text-center p-3 h3" onclick="number('7')">7</div>
+            <div class="col-3 bg-dark text-light border border-secondary text-center p-3 h3" onclick="number('8')">8</div>
+            <div class="col-3 bg-dark text-light border border-secondary text-center p-3 h3" onclick="number('9')">9</div>
+            <div class="col-3 bg-dark text-light border border-secondary text-center p-3 h3" onclick="operation('/')">/</div>
+            <div class="col-3 bg-dark text-light border border-secondary text-center p-3 h3" onclick="number('4')">4</div>
+            <div class="col-3 bg-dark text-light border border-secondary text-center p-3 h3" onclick="number('5')">5</div>
+            <div class="col-3 bg-dark text-light border border-secondary text-center p-3 h3" onclick="number('6')">6</div>
+            <div class="col-3 bg-dark text-light border border-secondary text-center p-3 h3" onclick="operation('x')">x</div>
+            <div class="col-3 bg-dark text-light border border-secondary text-center p-3 h3" onclick="number('1')">1</div>
+            <div class="col-3 bg-dark text-light border border-secondary text-center p-3 h3" onclick="number('2')">2</div>
+            <div class="col-3 bg-dark text-light border border-secondary text-center p-3 h3" onclick="number('3')">3</div>
+            <div class="col-3 bg-dark text-light border border-secondary text-center p-3 h3" onclick="operation('-')">-</div>
+            <div class="col-3 bg-dark text-light border border-secondary text-center p-3 h3" onclick="number('0')">0</div>
+            <div class="col-3 bg-dark text-light border border-secondary text-center p-3 h3" onclick="number('.')">.</div>
+            <div class="col-3 bg-dark text-light border border-secondary text-center p-3 h3" onclick="calculate()">=</div>
+            <div class="col-3 bg-dark text-light border border-secondary text-center p-3 h3" onclick="operation('+')">+</div>
+            <div class="col-12 bg-dark text-light border border-secondary text-center display-4 p-2 mb-2" onclick="clearing()">Clear</div>
+        </div>
+
+        <footer>
+            <div class="container-fluid padding">
+                <div class="row text-center">
+                    <div class="col-md-6 col-sm-12 col-lg-2 justify-content-center">
+                        <img src="/img/monkey.png" alt="">
+                    </div>
+                    <div class="col-md-6 col-sm-12 col-lg-2 justify-content-center">
+                        <img src="/img/donkey.png" alt="">
+                    </div>
+                    <div class="col-md-12 col-lg-4">
+                        <hr class="light">
+                        <h4>Contact Us</h4>
+                        <hr class="light">
+                        <p>Office Number: +65 9320 6190</p>
+                        <p>Email: zehchern@gmail.com</p>
+                    </div>
+                    <div class="col-md-12 col-lg-4">
+                        <hr class="light">
+                        <h4>Contactable Hours</h4>
+                        <hr class="light">
+                        <p>People usually call me Ze Hou</p>
+                        <p class="text-center">but</p>
+                        <p>You can call me anytime</p>
+                    </div>
+                    <div class="col-12">
+                        <hr class="light-100">
+                        <h5>&copy; Stealth</h5>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </body>
+    <script>
+        axios.post(`${adminurl}/api/auth/adminaccess`, {token: localStorage.getItem('jwt_token')}).then((response) => {
+            if (response.data.access == 0){
+                window.location.href = '/'
+            }
+        })
+        current_number = ""
+        current_operator = ""
+        next_number = ""
+        function number(number) {
+            if (current_operator != ""){
+                if (next_number == "0" || next_number== "") {
+                    next_number = number
+                    document.getElementById("next").innerHTML = next_number
+                }
+                else{
+                    next_number += number
+                    document.getElementById("next").innerHTML += number
+                }
+            }
+            else{
+                if (current_number == "0" || current_number== "") {
+                    current_number = number
+                    document.getElementById("value").innerHTML = current_number
+                }
+                else{
+                    current_number += number
+                    document.getElementById("value").innerHTML += number
+                }
+            }
+        }
+        function operation(operator) {
+            if (current_number != "0"){
+                current_operator = operator
+                document.getElementById("operator").innerHTML = current_operator
+            }
+
+        }
+        function clearing() {
+            current_number = "0"
+            current_operator = ""
+            next_number = ""
+            document.getElementById("value").innerHTML = current_number
+            document.getElementById("operator").innerHTML = current_operator
+            document.getElementById("next").innerHTML = current_operator
+        }
+        function back(thing){
+            if (thing == 1){
+                if (current_number.length == 1){
+                    current_number = "0"
+                }
+                else{
+                    current_number = current_number.slice(0, -1)
+                }
+                document.getElementById("value").innerHTML = current_number
+            }
+            if (thing == 2){
+                if (next_number.length == 1){
+                    next_number = "0"
+                }
+                else{
+                    next_number = next_number.slice(0, -1)
+                }
+                document.getElementById("next").innerHTML = next_number
+            }
+        }
+        function calculate() {
+            if (next_number != "" && current_operator != "" && current_number != ""){
+            
+                var calc = [parseFloat(current_number), parseFloat(next_number), current_operator]
+                console.log(calc)
+                if (current_operator == "/"){
+                    console.log(calc[0])
+                    if(Number.isInteger(calc[0]/calc[1])){
+                        document.getElementById("value").innerHTML = (calc[0]/calc[1])
+                    }
+                    else{
+                        document.getElementById("value").innerHTML = (calc[0]/calc[1]).toFixed(2)
+                    }
+                    current_number = calc[0]/calc[1]
+                }
+                if (current_operator == "+"){
+                    console.log(calc[0])
+                    if(Number.isInteger(calc[0]+calc[1])){
+                        document.getElementById("value").innerHTML = (calc[0]+calc[1])
+                    }
+                    else{
+                        document.getElementById("value").innerHTML = (calc[0]+calc[1]).toFixed(2)
+                    }
+                    current_number = calc[0]+calc[1]
+                }
+                if (current_operator == "-"){
+                    if(Number.isInteger(calc[0]-calc[1])){
+                        document.getElementById("value").innerHTML = (calc[0]-calc[1])
+                    }
+                    else{
+                        document.getElementById("value").innerHTML = (calc[0]-calc[1]).toFixed(2)
+                    }
+                    current_number = calc[0]-calc[1]
+                }
+                if (current_operator == "x"){
+                    if(Number.isInteger(calc[0]*calc[1])){
+                        document.getElementById("value").innerHTML = (calc[0]*calc[1])
+                    }
+                    else{
+                        document.getElementById("value").innerHTML = (calc[0]*calc[1]).toFixed(2)
+                    }
+                    current_number = calc[0]*calc[1]
+                }
+                if (Number.isInteger(current_number)){
+                    current_number = parseInt(current_number)
+                    document.getElementById("value").innerHTML = current_number
+                }
+                next_number = ""
+                document.getElementById("next").innerHTML = next_number
+                current_operator = ""
+                document.getElementById("operator").innerHTML = current_operator
+            }
+        }
+        
+        const adminurl = "https://stealth.com"
+
+        axios.post(`${adminurl}/api/auth/adminaccess`, {token: localStorage.getItem('jwt_token')}).then((response) => {
+            if (response.data.access == 0){
+                window.location.href = '/'
+            }
+        })
+        $(document).ready(function(){
+            document.getElementById("value").innerHTML = "0"
+            document.getElementById("next").innerHTML = "0"
+
+        })
+        function logout(){
+            localStorage.clear()
+        }
+    </script>
+</html>

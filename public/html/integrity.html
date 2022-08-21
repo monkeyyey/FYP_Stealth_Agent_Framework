@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+
+<head>
+    <script>
+        var existing = []
+    </script>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>File Integrity</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/css/integrity.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+    <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" ></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
+</head>
+
+<body id="body">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark" style="z-index: 3">
+        <a class="navbar-brand ml-4" href="/">Stealth Monkey</a>
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarContent"
+        >
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav md-auto" id="navbarr">
+                <li class="nav-item">
+                    <a class="nav-link" href="/home">Home</a>
+                </li>
+                <li class="nav-item pr-2">
+                    <a class="nav-link" href="/intrusion_detection">Intrusion</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/security_analytics">Analytics</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/file_permission">Permission</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/file_integrity">Integrity</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/custom">Custom</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/virustotal">File Scan</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/register" class="nav-link">Register</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/agents" class="nav-link">Agents</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/profiles" class="nav-link">Profiles</a>
+                </li>
+                <li class="bg-danger rounded ml-2">
+                    <a onclick="logout()" href="/login" class="nav-link">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="row justify-content-center" id="page-body">
+        <table class="mt-4 table table-hover table-dark col-md-10 col-sm-12" id="agent-table">
+            <thead class="text-warning">
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">IP address</th>
+                <th scope="col">Port</th>
+                <th scope="col">Status</th>
+                <th scope="col">Last Status Update</th>
+                <th scope="col">View</th>
+                <th scope="col">Integrity Check</th>
+                <th scope="col">Retrieve Updates</th>
+            </tr>
+            </thead>
+            <tbody id="agents">
+            
+            </tbody>
+        </table>
+    </div>
+
+    <div id="agent-label" class="col-4 p-3 justify-content-center" style="margin: auto">
+    </div>
+
+    <div class="row bg-secondary mx-auto px-auto text-center justify-content-center">
+        <div class="col-9 p-3 justify-content-center text-center " id="agent_header">
+            <h1 class="text-center">File Changes</h1>
+        </div>
+
+        <div class="col-9 p-3 justify-content-center text-center">
+            <h2 class="text-center">Summary</h2>
+            <h5 class="text-center" id="updated">Last updated: </h5>
+        </div>
+
+        <div class="col-4 p-4  justify-content-center text-center" id="pie-summary" style="margin: auto">
+
+        </div>
+
+        <div class="col-10 p-5 justify-content-center text-center" id="integrity_info">
+            <label for="filterSearch">Search by ID, Hostname, IP address, or File name: </label>
+            <input id="filterSearch" name="filterSearch" type="text">
+            <button id="search-btn" class="btn btn-primary" onclick="filterSearch()">Search</button>
+            <div class="col-10 p-4 justify-content-center text-center">
+                <label for="filter-date" name="filterDate">Filter by Date:</label>
+                <input id="filter-date" type="date">
+                <button id="date-filter" class="btn btn-primary" onclick="dateFilter()">Filter</button>
+
+                <label for="action">Filter by action</label>
+                <select name="action_done" id="action_done">
+                    <option value="All">All</option>
+                    <option value="Added">Added</option>
+                    <option value="Modified">Modified</option>
+                    <option value="Removed">Removed</option>
+                </select>
+                <button id="filtering" class="btn btn-primary" onclick="filter()">Filter</button> 
+
+                <label for="filter-time" name="filterTime">Filter by Time:</label>
+                <input type="time" id="filter-time">
+                <button id="time-filter" class="btn btn-primary" onclick="timeFilter()">Filter</button>
+            </div>
+            
+            <table class="table table-hover table-dark table-fluid" id="twr-table">
+                <thead>
+                    <tr class="text-warning">
+                        <th scope="col">#</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">Host Name</th>
+                        <th scope="col">IP Address</th>
+                        <th scope="col">File name</th>
+                        <th scope="col">Action</th>
+                        <th scope="col">Date and Time</th>
+                    </tr>
+                </thead>
+                <tbody id="twr-data">
+                </tbody>
+            </table>
+        </div>
+        <div class="col-3 p-3" id="side_info">
+            <hr>
+
+        </div>
+    </div>
+
+    </div>
+    <script>
+        axios.post(`/api/auth/adminaccess`, {token: localStorage.getItem('jwt_token')}).then((response) => {
+            if (response.data.access == 0){
+                window.location.href = '/'
+            }
+        })
+        axios.get(`/api/extractfile/getActions/`).then((response) => {
+            var added = [];
+            var modified = [];
+            var removed = [];
+
+            var allLabels = ['Added', 'Modified', 'Removed'];
+
+            var today = new Date();
+            var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+            var time = today.getHours() + ":" + today.getMinutes() 
+
+            console.log("Generating summary...");
+
+            const result = response.data;
+
+            for (var i = 0; i < result.length; i++) {
+                if (result[i].action === "Added"){
+                    added.push(result[i].action);
+                } else if (result[i].action === "Modified"){
+                    modified.push(result[i].action);
+                } else if (result[i].action === "Removed"){
+                    removed.push(result[i].action);
+                }
+            }
+            
+            var colours = ['rgb(255, 135, 135)', 'rgb(143, 131, 255)', 'rgb(104, 241, 255)'];
+            var pieChart = [{
+            values: [added.length, modified.length, removed.length],
+            labels: ['Added', 'Modified', 'Removed'],
+            type: 'pie',
+            textinfo: "label+value",
+            marker: {
+                colors: colours
+            }, 
+            }];
+
+            var layout = {
+                height: 400,
+                width: 500,
+            }
+
+            Plotly.newPlot('pie-summary', pieChart, layout);
+            $('#updated').append(`${date} ${time}`)
+        });
+        
+        function change_agent(ip, name){
+            document.getElementById("agent-label").innerHTML = `<h3 class="text-dark text-center"> Chart for '${name}'</h3>`;
+            axios.get(`/api/extractfile/getAgentActions/${name}`).then((response) => {
+                var agent_added = [];
+                var agent_modified = [];
+                var agent_removed = [];
+
+                var allLabels = ['Added', 'Modified', 'Removed'];
+
+                var today = new Date();
+                var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+                var time = today.getHours() + ":" + today.getMinutes() 
+
+                const result = response.data;
+
+                for (var i = 0; i < result.length; i++) {
+                    if (result[i].action === "Added") {
+                        agent_added.push(result[i].action);
+                    } else if (result[i].action === "Modified") {
+                        agent_modified.push(result[i].action);
+                    } else if (result[i].action === "Removed") {
+                        agent_removed.push(result[i].action);
+                    }
+                }
+                var colours = ['rgb(255, 135, 135)', 'rgb(143, 131, 255)', 'rgb(104, 241, 255)'];
+                var pieChart = [{
+                    values: [agent_added.length, agent_modified.length, agent_removed.length],
+                    labels: ['Added', 'Modified', 'Removed'],
+                    type: 'pie',
+                    textinfo: "label+value",
+                    marker: {
+                        colors: colours
+                    }, 
+                }];
+                var layout = {
+                    height: 400,
+                    width: 500,
+                }
+
+                if (agent_added.length == 0 && agent_modified.length == 0 && agent_removed.length == 0) {
+                    document.getElementById("agent-label").innerHTML = `<h3 class="text-dark text-center"> No statistics for '${name}'</h3>`;
+                } else {
+                    Plotly.newPlot('agent-label', pieChart, layout);
+                }
+            });
+    }
+        function filter() {
+            console.log("Filtering...");
+            var action_html = document.getElementById("action_done")
+            var action = action_html.value
+
+            axios.get(`/api/extractfile/filter_action/${action}`).then((response) => {
+                document.getElementById("twr-data").innerHTML = ""
+                const result = response.data;
+                if (result.length == 0) {
+                    $("#twr-data").append(`<tr>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                        </tr>`)
+                }
+                if (action == "All") {
+                    window.location.reload();
+                }
+                for (var i = 0; i < result.length; i++) {
+                    
+                    $("#twr-data").append(`
+                        <tr>
+                            <td>${i+1}</td>
+                            <td>${result[i].id}</td>
+                            <td>${result[i].agent_name}</td>
+                            <td>${result[i].ip_address}</td>
+                            <td>${result[i].filename}</td>
+                            <td>${result[i].action}</td>
+                            <td>${result[i].created_at}</td>
+                        </tr>`);
+                }
+                $(document).ready(function () {
+                    $('#twr-table').DataTable();
+                });
+            });
+            
+        }
+
+        console.log("Fetching data...");
+        axios.get(`/api/extractfile/getData/`).then((response) => {
+            var host = ""
+            console.log("Data loaded.");
+            const result = response.data;
+            for (var i = 0; i < result.length; i++) {
+                if (result[i].agent_name){
+                    existing.push(result[i].agent_name)
+                }
+                $("#twr-data").append(`
+                        <tr>
+                            <td>${i+1}</td>
+                            <td>${result[i].id}</td>
+                            <td>${result[i].agent_name}</td>
+                            <td>${result[i].ip_address}</td>
+                            <td>${result[i].filename}</td>
+                            <td>${result[i].action}</td>
+                            <td>${result[i].created_at}</td>
+                        </tr>`);
+                host =  result[i].agent_name
+            }
+            console.log(existing)
+            $(document).ready(function () {
+                $('#twr-table').DataTable();
+            });
+        });
+
+        function filterSearch() {
+            console.log('Searching...');
+            var searchHtml = document.getElementById('filterSearch');
+            var search = searchHtml.value;
+
+            axios.get(`/api/extractfile/search/${search}`).then((response) => {
+                document.getElementById("twr-data").innerHTML = ""
+                const result = response.data;
+                if (result.length == 0) {
+                    $("#twr-data").append(`<tr>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                        </tr>`)
+                }
+                for (var i = 0; i < result.length; i++) {
+                    $("#twr-data").append(`
+                        <tr>
+                            <td>${i+1}</td>
+                            <td>${result[i].id}</td>
+                            <td>${result[i].agent_name}</td>
+                            <td>${result[i].ip_address}</td>
+                            <td>${result[i].filename}</td>
+                            <td>${result[i].action}</td>
+                            <td>${result[i].created_at}</td>
+                        </tr>`);
+                }
+                $(document).ready(function () {
+                    $('#twr-table').DataTable();
+                });
+            });
+        };
+
+        function dateFilter() {
+            console.log('Searching...');
+            var dateHtml = document.getElementById('filter-date');
+            var date = dateHtml.value;
+            axios.get(`/api/extractfile/date/${date}`).then((response) => {
+                document.getElementById("twr-data").innerHTML = ""
+                const result = response.data;
+                if (result.length == 0) {
+                    $("#twr-data").append(`<tr>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                        </tr>`)
+                }
+                for (var i = 0; i < result.length; i++) {
+                    $("#twr-data").append(`
+                        <tr>
+                            <td>${i+1}</td>
+                            <td>${result[i].id}</td>
+                            <td>${result[i].agent_name}</td>
+                            <td>${result[i].ip_address}</td>
+                            <td>${result[i].filename}</td>
+                            <td>${result[i].action}</td>
+                            <td>${result[i].created_at}</td>
+                        </tr>`);
+                }
+            });
+
+            $(document).ready(function () {
+                $('#twr-table').DataTable();
+            });
+        };
+
+        function timeFilter() {
+            console.log('Searching...');
+            var timeHtml = document.getElementById('filter-time');
+            var time = timeHtml.value;
+            axios.get(`/api/extractfile/time/${time}`).then((response) => {
+                document.getElementById("twr-data").innerHTML = ""
+                const result = response.data;
+                if (result.length == 0) {
+                    $("#twr-data").append(`<tr>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                            <td>NIL</td>
+                        </tr>`)
+                }
+                for (var i = 0; i < result.length; i++) {
+                    $("#twr-data").append(`
+                        <tr>
+                            <td>${i+1}</td>
+                            <td>${result[i].id}</td>
+                            <td>${result[i].agent_name}</td>
+                            <td>${result[i].ip_address}</td>
+                            <td>${result[i].filename}</td>
+                            <td>${result[i].action}</td>
+                            <td>${result[i].created_at}</td>
+                        </tr>`);
+                }
+            });
+        }
+
+        axios.get(`/api/agents/get_agents`).then((response) => {
+            const agentObject = response.data;
+            var status = ""
+            var current_time = Math.floor(Date.now() / 1000)
+            for (const x in agentObject) {
+                if(agentObject[x]['scope']){
+                    if (agentObject[x]['scope'].includes("4")){
+                        try{
+                            var last_status_update = parseInt(agentObject[x]['last_status_update'].split("|")[1])
+                            if ((current_time - last_status_update) < 60){
+                                status = "Running"
+                            }
+                            else{
+                                status = "Unreachable"
+                            }
+                        }
+                        catch{
+                            status = "Unreachable"
+                        }
+                        if(!agentObject[x]['last_status_update']){
+                            var last_status_update_time = "No status update available"
+                        }
+                        else{
+                            var last_status_update_time = agentObject[x]['last_status_update'].split("|")[0]
+                        }
+                        if(!agentObject[x]['uptime'] || status =="Unreachable"){
+                            var uptime = "No uptime available"
+                        }
+                        else{
+                            var uptime = agentObject[x]['uptime'].slice(0, -4)
+                        }
+                        $("#agents").append(`
+                            <tr>
+                                <td>${agentObject[x]['agent_name']}</td>
+                                <td>${agentObject[x]['agent_ip']}</td>
+                                <td>${agentObject[x]['port_number']}</td>
+                                <td><span class="bi bi-circle-fill ${status}" id="${agentObject[x]['agent_name']}_status">${status}</span></td>
+                                <td>${last_status_update_time}</td>
+                                <td><button class="btn btn-warning btn-sm" onclick="change_agent('${agentObject[x]['agent_ip']}','${agentObject[x]['agent_name']}')">View</button></td>
+                                <td><button class="btn btn-warning btn-sm" onclick="intCheck('${agentObject[x]['agent_ip']}','${agentObject[x]['agent_name']}',${agentObject[x]['port_number']})">Run integrity check</button></td>
+                                <td><button class="btn btn-warning btn-sm" onclick="retrieve('${agentObject[x]['agent_ip']}','${agentObject[x]['agent_name']}',${agentObject[x]['port_number']})">Retrieve updates</button></td>
+                            </tr>
+                        `);  
+                    }
+                }
+            }    
+        })
+
+        function check_status(ip, nickname) {
+            var requestBody = {
+                agent_ip: ip,
+                agent_name: nickname
+            }
+            axios.post(`/api/agents/check_status`, requestBody).then((response) => {
+                var status = response.data.status
+                console.log(status)
+                if (status == 0) {
+                    document.getElementById(`${nickname}`).innerHTML = ""
+                    $(`#${nickname}`).attr("class", "justify-content-center card bg-danger border border-secondary col-xl-2 col-lg-3 col-md-4 col-sm-6 m-2");
+                    document.getElementById(`${nickname}`).innerHTML = `
+                            <div class="h-75 content_img">
+                                <img class="col-12 h-100 pt-4" src="/img/agent.png">
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-text text-light">Nickname: ${nickname}</h5>
+                                <h5 class="card-text text-light">IP: ${ip}</h5>
+                                <button class="button" onclick="change_agent('${ip}}','${nickname}')">View</button>
+                                <button class="button" onclick="check_status('${ip}','${nickname}')">Check status</button>
+                            </div>
+                            `
+                }
+                if (status == 1) {
+                    document.getElementById(`${nickname}`).innerHTML = ""
+                    $(`#${nickname}`).attr("class", "justify-content-center card bg-success border border-secondary col-xl-2 col-lg-3 col-md-4 col-sm-6 m-2");
+                    document.getElementById(`${nickname}`).innerHTML = `
+                            <div class="h-75 content_img">
+                                <img class="col-12 h-100 pt-4" src="/img/agent.png">
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-text text-light">Nickname: ${nickname}</h5>
+                                <h5 class="card-text text-light">IP: ${ip}</h5>
+                                <button class="button" onclick="change_agent('${ip}','${nickname}')">View</button>
+                                <button class="button" onclick="check_status('${ip}','${nickname}')">Check status</button>
+                            </div>
+                        `
+                }
+            })
+        }
+        // setInterval(function(){
+        //     var today = new Date();
+        //     if (today.getHours() == 14 && today.getMinutes() == 1) { // gives agent 1 minute buffer time to run the cron job (2:01pm)
+        //         axios.get(`/api/extractfile/getAllAgents/`).then((response) => {
+        //             console.log("Getting updates...");
+        //             const result = response.data;
+        //             console.log(result);
+        //             for (var i = 0; i < result.length; i++) {
+        //                 retrieve(result[i].agent_ip, result[i].agent_name)
+        //             }
+        //             window.location.reload();
+        //             console.log("Updated successfully...");
+        //         });
+        //     }
+        // }, 60000)
+
+        function intCheck(ip, nickname, port) {
+            console.log(existing)
+            if (existing.includes(nickname)) {
+                alert("Integrity check requested! Please wait for a few minutes, depending on how many items are there to check.");
+                var reqbody = {
+                    ip: ip,
+                    agent_name: nickname,
+                    port: port
+                };
+                axios.post(`/api/extractfile/integrityCheck/`, reqbody).then((response) => {
+                    console.log(`Requesting integrity check for ${nickname}...`);
+                });
+            } else {
+                if (confirm('No existing information, do you want to run an integrity check?')) {
+                    var today = new Date();
+                    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+                    var time = today.getHours() + "." + today.getMinutes() //+ "." + today.getSeconds();
+                    var dateTime = date+'_'+time;
+                    var originFile = `firstinfo.txt`;
+                    var dest = `./tripwire/${filename}`;
+                    var reqbody = {
+                        ip: ip, 
+                        originFile: originFile,
+                        dest: dest,
+                        port: port
+                    };
+                    axios.post(`/api/extractfile/create_new`, reqbody).then((response) => {
+                        alert("You can get the information after a few minutes")
+                    })
+                    existing.push(nickname);
+                }
+            }
+        }
+
+        function retrieve(ip, nickname, port) {
+            if (existing.includes(nickname)) {
+                event.preventDefault()
+                console.log("Retrieving file...");
+                var filename = `updates.txt`;
+                var dest = `./tripwire/${nickname}_updates.txt`;
+                var reqbody = {
+                    ip : ip,
+                    agent_name: nickname,
+                    filename: filename,
+                    dest: dest,
+                    port: port
+                }
+                console.log(reqbody)
+                axios.post(`/api/extractfile/integrity_info`, reqbody).then((response) => {
+                    console.log("File retrieved");
+                })
+
+                // var data, action, added, modified, removed;
+                // added, modified, removed = [];
+
+                // var allLabels = ['Added', 'Modified', 'Removed'];
+                // var readFile = fs.readFileSync(dest, 'utf-8');
+                // readFile.split("\n").forEach(line => {
+                //     if (line.includes("+ Added") || line.includes("+ Modified") || line.includes("+ Removed")) {
+                //         if (line.includes("+ Added")) {
+                //             action = line.split(' ')[1];
+                //             added.push(action)
+                //         } else if (line.includes("+ Modified")) {
+                //             action = line.split(' ')[1];
+                //             modified.push(action)
+                //         } else if (line.includes("+ Removed")) {
+                //             action = line.split(' ')[1];
+                //             removed.push(action)
+                //         }
+                //     } 
+                // });
+
+                // var colours = ['rgb(255, 135, 135)', 'rgb(143, 131, 255)', 'rgb(104, 241, 255)'];
+                // var pieChart = [{
+                //     values: [added.length, modified.length, removed.length],
+                //     labels: ['Added', 'Modified', 'Removed'],
+                //     type: 'pie',
+                //     textinfo: "label+value",
+                //     marker: {
+                //     colors: colours
+                //     }, 
+                // }];
+
+                // var layout = {
+                // height: 400,
+                // width: 500,
+                // }
+
+                // Plotly.newPlot('pie-agent', pieChart, layout);
+            }
+            else {
+                if (confirm('No existing information, do you want to run an integrity check?')) {
+                    var today = new Date();
+                    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+                    var time = today.getHours() + "." + today.getMinutes() //+ "." + today.getSeconds();
+                    var dateTime = date+'_'+time;
+                    var originFile = `firstinfo.txt`;
+                    var filename = nickname + dateTime
+                    var dest = `./tripwire/${filename}`;
+                    var reqbody = {
+                        ip: ip, 
+                        agent_name: nickname,
+                        originFile: originFile,
+                        dest: dest,
+                        port: port
+                    };
+                    axios.post(`/api/extractfile/create_new`, reqbody).then((response) => {
+                        alert("You can get the information after a few minutes")
+                    })
+                    existing.push(nickname);
+                }
+            }
+        };
+
+    </script>
+</body>
+
+</html>

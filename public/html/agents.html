@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <link href="/css/profiles.css" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>    
+        <script src="https://kit.fontawesome.com/801503bc53.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body id="body">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark" style="z-index: 3">
+            <a class="navbar-brand ml-4" href="/">Stealth</a>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-toggle="collapse"
+                data-target="#navbarContent"
+            >
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav md-auto" id="navbarr">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item pr-2">
+                        <a class="nav-link" href="/intrusion_detection">Intrusion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/security_analytics">Analytics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/file_permission">Permission</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/file_integrity">Integrity</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/custom">Custom</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/virustotal">File Scan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/register" class="nav-link">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/agents" class="nav-link">Agents</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/profiles" class="nav-link">Profiles</a>
+                    </li>
+                    <li class="bg-danger rounded ml-2">
+                        <a onclick="logout()" href="/login" class="nav-link">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="row justify-content-center m-3">
+            <div class="col-5 bg-dark text-light p-3 mr-1">
+                <h2 class="text-center text-warning mt-2">Create New Agent</h2>
+                <form id="createagent-form" class="row">
+                    <div class="col-12">
+                        <label>Agent Name:</label>
+                        <input class="form-control mb-1" type="text" id="new_name">
+                        <label>Agent Passcode:</label>
+                        <input class="form-control mb-1" type="password" id="agent_passcode">
+                        <label>Retype Passcode:</label>
+                        <input class="form-control mb-1" type="password" id="retype_passcode">
+                        <hr>
+                        <h2 class="text-center text-warning">Authenticate</h2>
+                        <label class="text-light">Admin Username</label>
+                        <input class="form-control mb-1" type="text" id="admin_username1">
+                        <label class="text-light">Admin Password</label>
+                        <input class="form-control" type="text" id="admin_password1">
+                    </div>
+                    <button type="submit" class="btn btn-info col-11 mt-2 mx-auto">Create Agent!</button>
+                    <button class="col-11 mt-2 mx-auto btn btn-warning" onclick="get_installer()">Download Installer</button> 
+                </form>
+            </div>
+            <div class="col-5 bg-dark text-light p-3 ml-1">
+                <h2 class="text-center text-warning mt-2">Delete Agent</h2>
+                <form id="deleteagent-form" class="row">
+                    <div class="form-group col-12">
+                        <label class="text-light">Agent to delete</label>
+                        <select id="agent-dropdown" class="form-control mb-1"></select>
+                        <hr>
+                        <h2 class="text-center text-warning">Authenticate</h2>
+                        <label class="text-light">Admin Username</label>
+                        <input class="form-control mb-1" type="text" id="admin_username2">
+                        <label class="text-light">Admin Password</label>
+                        <input class="form-control" type="text" id="admin_password2">
+
+                    </div>
+                    <button type="submit" class="btn btn-info col-11 mx-auto">Delete Agent</button>
+                </form>    
+            </div>
+        </div>
+
+        <footer class=" text-center text-lg-start pt-4 bg-dark text-secondary" style="background: rgb(0,0,0); background: linear-gradient(180deg, rgba(12,12,12,1) 20%, rgba(16,16,16,1) 70%, rgba(24,24,24,1) 100%)">
+            <div class="container p-4 w-100 text-center justify-content-center">
+                <div class="row col-xl-12">
+                    <div class="col-xl-8 col-lg-6 col-md-12 text-left">
+                        <h3 class="col-xl-12 text-light">About Us</h3>
+                        <div class="col-xl-12">
+                            <p>
+                                <b>Stelf on the Shelf</b> is a Proof-of-Concept (POC) project, a framework
+                                that can be applied to gather runtime system configuration and status for a targeted system
+                                in stealth mode. With the framework in place, a system administrator can monitor and gather
+                                vital system information for malware and/or intrusion detection at the EndPoint level.
+                            </p>
+                        </div>
+                    </div>
+    
+                    <div class="col-xl-4 col-md-12 text-left">
+                        <h3 class="text-light">Social Media</h3>
+                        <a href="https://github.com/monkeyyey/stelf_on_the_shelf"><i class="fab fa-instagram"></i>&nbsp Instagram</a> <br>
+                        <a href="https://www.sp.edu.sg/"><i class="fa-solid fa-graduation-cap"></i>&nbsp Singapore Polytechnic</a> <br>
+                        <a href="https://github.com/monkeyyey/stelf_on_the_shelf"><i class="fab fa-github"></i>&nbsp Find us on Github!</a> <br>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center pb-3 text-light">
+                © 2022 Copyright:
+                <a class="text-secondary" href="https://stealth.com/home">Stelf on the Shelf</a>
+            </div>
+        </footer>
+    </body>
+
+    <script>
+        axios.post(`/api/auth/adminaccess`, {token: localStorage.getItem('jwt_token')}).then((response) => {
+            if (response.data.access == 0){
+                window.location.href = '/'
+            }
+        })
+        axios.get(`/api/agents/get_agents`).then((response) => {
+            const agentObject = response.data;
+            for (const x in agentObject) {
+                $("#agent-dropdown").append(`
+                    <option>${agentObject[x]['agent_name']}</option>
+                `)   
+            }
+        })
+        
+        $("#deleteagent-form").submit((event) => {
+            event.preventDefault()
+            const agent_to_delete = $("#agent-dropdown").val().trim()
+            var username = $("#admin_username2").val().trim()
+            var password = $("#admin_password2").val().trim()
+            var request_body = {
+                agent_name: agent_to_delete,
+                username: username,
+                password: password
+            }
+            axios.post(`/api/agents/delete_agent`, request_body).then((response)=>{
+                if (response.status == 200){
+                    alert(`${agent_to_delete} successfully deleted!`)
+                    window.location.reload();
+                }
+            })
+            .catch((error)=> {
+                if (error.response.status === 401) {
+                    alert("Authentication Failed");
+                } else {
+                    alert("Something unexpected went wrong.");
+                }
+            })
+        })
+
+        $("#createagent-form").submit((event) => {
+            event.preventDefault()
+            const agent_to_create = $("#new_name").val().trim()
+            const agent_passcode = $("#agent_passcode").val().trim()
+            const retype_passcode = $("#retype_passcode").val().trim()
+            var username = $("#admin_username1").val().trim()
+            var password = $("#admin_password1").val().trim()
+            var request_body = {
+                agent_name: agent_to_create,
+                passcode: agent_passcode,
+                retype_passcode: retype_passcode,
+                username: username,
+                password: password
+            }
+            axios.post(`/api/agents/create_agent`, request_body).then((response)=>{
+                if (response.status == 200){
+                    alert(`${agent_to_create} successfully created!`)
+                    window.location.reload();
+                }
+            })
+            .catch((error)=> {
+                if (error.response.status === 401) {
+                    alert("Passwords do not match");
+                } 
+                else if (error.response.status === 402){
+                    alert("Authentication failed")
+                }else {
+                    alert("Something unexpected went wrong.");
+                }
+            })
+        })
+
+        function get_installer(){
+            event.preventDefault()
+            axios({
+                url: `/api/agents/get_installer`, //your url
+                method: 'GET',
+                responseType: 'blob', // important
+            }).then((response) => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'installer.sh'); //or any other extension
+                document.body.appendChild(link);
+                link.click();
+            });
+        }
+        function logout(){
+            localStorage.clear()
+        }
+        
+    </script>
+</html>

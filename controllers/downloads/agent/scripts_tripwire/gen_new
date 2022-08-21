@@ -1,0 +1,4 @@
+sudo tripwire --check
+sudo twprint -m r --twrfile /var/lib/tripwire/report/$(hostname)-report.twr > /var/lib/agent/tripwire/$(hostname)-report.txt
+sudo python3 /var/lib/agent/scripts_tripwire/firstextraction_linux.py /var/lib/agent/tripwire/$(hostname)-report.txt
+sudo rm /var/lib/tripwire/report/$(hostname)-report.twr

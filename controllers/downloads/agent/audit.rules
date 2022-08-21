@@ -1,0 +1,36 @@
+## First rule - delete all
+-D
+
+## Increase the buffers to survive stress events.
+## Make this bigger for busy systems
+-b 8192
+
+## Failure mode: 0 (silent), 1 (printk, print a failure message), (2, panic, will halt system)
+-f 1
+
+## user, group, password databases
+-w /etc/group -p wa -k monitor
+-w /etc/passwd -p wa -k monitor
+-w /etc/gshadow -k monitor
+-w /etc/shadow -k monitor
+-w /etc/security/opasswd -k monitor
+
+## login configuration and information
+-w /etc/ssh/sshd_config -p rwx -k monitor
+-w /etc/login.defs -p wa -k monitor
+-w /etc/securetty -p wa -k monitor
+-w /var/log/faillog -p wa -k monitor
+-w /var/log/lastlog -p wa -k monitor
+-w /var/log/tallylog -p wa -k monitor
+
+## Monitor for use of process ID change (switching accounts) applications
+-w /bin/su -p x -k monitor
+-w /usr/bin/sudo -p x -k monitor
+-w /etc/sudoers -p rw -k monitor
+
+## Custom Monitoring
+## Custom Rules go here
+## End of Custom Monitoring
+# To disable adding additional rules. *New rules will require reboot
+-e 2
+  

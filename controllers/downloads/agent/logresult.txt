@@ -1,0 +1,5 @@
+----
+type=PROCTITLE msg=audit(22/06/2022 10:17:17.434:116) : proctitle=/usr/bin/nautilus --gapplication-service 
+type=PATH msg=audit(22/06/2022 10:17:17.434:116) : item=0 name=/root/Documents/payload/logtest.txt inode=17665343 dev=fc:00 mode=file,644 ouid=root ogid=root rdev=00:00 obj=unconfined_u:object_r:admin_home_t:s0 nametype=NORMAL cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 cap_frootid=0 
+type=CWD msg=audit(22/06/2022 10:17:17.434:116) : cwd=/root 
+type=SYSCALL msg=audit(22/06/2022 10:17:17.434:116) : arch=x86_64 syscall=lgetxattr success=yes exit=38 a0=0x7f6278010630 a1=0x7f62b22a1e5e a2=0x7f6278009690 a3=0xff items=1 ppid=2145 pid=2832 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=(none) ses=3 comm=pool exe=/usr/bin/nautilus subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=monitor
